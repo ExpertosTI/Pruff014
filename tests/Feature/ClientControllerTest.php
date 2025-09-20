@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -13,9 +14,10 @@ class ClientControllerTest extends TestCase
 
     public function test_can_list_clients()
     {
+        $user = User::factory()->create();
         Client::factory()->count(3)->create();
         
-        $response = $this->getJson('/api/clients');
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/clients');
         
         $response->assertStatus(200)
                 ->assertJsonStructure([
@@ -27,13 +29,15 @@ class ClientControllerTest extends TestCase
 
     public function test_can_create_client()
     {
+        $user = User::factory()->create();
+        
         $clientData = [
             'name' => $this->faker->name,
             'phone_number' => $this->faker->phoneNumber,
             'client_type' => 'regular'
         ];
 
-        $response = $this->postJson('/api/clients', $clientData);
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/clients', $clientData);
 
         $response->assertStatus(201)
                 ->assertJsonStructure([
@@ -45,7 +49,9 @@ class ClientControllerTest extends TestCase
 
     public function test_validation_fails_when_creating_client_with_invalid_data()
     {
-        $response = $this->postJson('/api/clients', []);
+        $user = User::factory()->create();
+        
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/clients', []);
 
         $response->assertStatus(422)
                 ->assertJsonValidationErrors(['name', 'phone_number', 'client_type']);
@@ -53,9 +59,10 @@ class ClientControllerTest extends TestCase
 
     public function test_can_show_client()
     {
+        $user = User::factory()->create();
         $client = Client::factory()->create();
 
-        $response = $this->getJson("/api/clients/{$client->id}");
+        $response = $this->actingAs($user, 'sanctum')->getJson("/api/clients/{$client->id}");
 
         $response->assertStatus(200)
                 ->assertJsonStructure([
@@ -65,17 +72,20 @@ class ClientControllerTest extends TestCase
 
     public function test_returns_404_when_client_not_found()
     {
-        $response = $this->getJson('/api/clients/999');
+        $user = User::factory()->create();
+        
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/clients/999');
 
         $response->assertStatus(404);
     }
 
     public function test_can_update_client()
     {
+        $user = User::factory()->create();
         $client = Client::factory()->create();
         $updateData = ['name' => 'Updated Client Name'];
 
-        $response = $this->putJson("/api/clients/{$client->id}", $updateData);
+        $response = $this->actingAs($user, 'sanctum')->putJson("/api/clients/{$client->id}", $updateData);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('clients', ['id' => $client->id, 'name' => 'Updated Client Name']);
@@ -83,9 +93,10 @@ class ClientControllerTest extends TestCase
 
     public function test_can_delete_client()
     {
+        $user = User::factory()->create();
         $client = Client::factory()->create();
 
-        $response = $this->deleteJson("/api/clients/{$client->id}");
+        $response = $this->actingAs($user, 'sanctum')->deleteJson("/api/clients/{$client->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('clients', ['id' => $client->id]);

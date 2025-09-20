@@ -4,9 +4,50 @@ API REST para gestión de almacenes hecha con Laravel 9 y PHP 8.
 
 ## Qué hace
 
-Básicamente maneja clientes, artículos y usuarios. CRUD completo para todo, con validaciones y tests.
+Básicamente maneja clientes, artículos y usuarios. CRUD completo para todo, con validaciones, tests y autenticación con Sanctum.
+
+## Autenticación
+
+La API usa Laravel Sanctum para autenticación basada en tokens.
+
+### Registro
+```bash
+POST /api/register
+{
+    "name": "Juan Pérez",
+    "email": "juan@example.com",
+    "password": "password123",
+    "password_confirmation": "password123",
+    "cedula": "001-1234567-8",
+    "phone_number": "809-123-4567",
+    "blood_type": "O+"
+}
+```
+
+### Login
+```bash
+POST /api/login
+{
+    "email": "juan@example.com",
+    "password": "password123"
+}
+```
+
+### Logout
+```bash
+POST /api/logout
+Authorization: Bearer {token}
+```
+
+### Perfil del usuario
+```bash
+GET /api/me
+Authorization: Bearer {token}
+```
 
 ## Endpoints
+
+**Nota:** Todos los endpoints (excepto register y login) requieren autenticación con Bearer token.
 
 ### Clientes
 - `GET /api/clients` - Lista todos
@@ -44,7 +85,7 @@ php artisan migrate --seed
 php artisan test
 ```
 
-22 tests, todos pasan. Cubren CRUD, validaciones y errores 404/422.
+Ahora incluye tests de autenticación. Todos los tests cubren CRUD, validaciones, errores 404/422 y autenticación.
 
 ## Estructura
 
@@ -59,7 +100,8 @@ php artisan test
 - Form Requests para todas las validaciones
 - API Resources para respuestas consistentes
 - Fat models, skinny controllers
-- Sanctum para auth (aunque no lo uso en los tests)
+- Sanctum para autenticación con tokens
 - Migraciones con seeders
+- Todas las rutas protegidas excepto register/login
 
-Eso es todo. Funciona.
+Eso es todo. Funciona con autenticación completa.

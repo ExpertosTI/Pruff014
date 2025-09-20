@@ -13,9 +13,10 @@ class UserControllerTest extends TestCase
 
     public function test_can_list_users()
     {
+        $user = User::factory()->create();
         User::factory()->count(3)->create();
         
-        $response = $this->getJson('/api/users');
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/users');
         
         $response->assertStatus(200)
                 ->assertJsonStructure([
@@ -27,6 +28,8 @@ class UserControllerTest extends TestCase
 
     public function test_can_create_user()
     {
+        $user = User::factory()->create();
+        
         $userData = [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
@@ -37,7 +40,7 @@ class UserControllerTest extends TestCase
             'blood_type' => 'O+'
         ];
 
-        $response = $this->postJson('/api/users', $userData);
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/users', $userData);
 
         $response->assertStatus(201)
                 ->assertJsonStructure([
@@ -49,7 +52,9 @@ class UserControllerTest extends TestCase
 
     public function test_validation_fails_when_creating_user_with_invalid_data()
     {
-        $response = $this->postJson('/api/users', []);
+        $user = User::factory()->create();
+        
+        $response = $this->actingAs($user, 'sanctum')->postJson('/api/users', []);
 
         $response->assertStatus(422)
                 ->assertJsonValidationErrors(['name', 'email', 'password', 'cedula']);
@@ -57,9 +62,10 @@ class UserControllerTest extends TestCase
 
     public function test_can_show_user()
     {
+        $authUser = User::factory()->create();
         $user = User::factory()->create();
 
-        $response = $this->getJson("/api/users/{$user->id}");
+        $response = $this->actingAs($authUser, 'sanctum')->getJson("/api/users/{$user->id}");
 
         $response->assertStatus(200)
                 ->assertJsonStructure([
@@ -69,17 +75,20 @@ class UserControllerTest extends TestCase
 
     public function test_returns_404_when_user_not_found()
     {
-        $response = $this->getJson('/api/users/999');
+        $user = User::factory()->create();
+        
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/users/999');
 
         $response->assertStatus(404);
     }
 
     public function test_can_update_user()
     {
+        $authUser = User::factory()->create();
         $user = User::factory()->create();
         $updateData = ['name' => 'Updated Name'];
 
-        $response = $this->putJson("/api/users/{$user->id}", $updateData);
+        $response = $this->actingAs($authUser, 'sanctum')->putJson("/api/users/{$user->id}", $updateData);
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'Updated Name']);
@@ -87,9 +96,10 @@ class UserControllerTest extends TestCase
 
     public function test_can_delete_user()
     {
+        $authUser = User::factory()->create();
         $user = User::factory()->create();
 
-        $response = $this->deleteJson("/api/users/{$user->id}");
+        $response = $this->actingAs($authUser, 'sanctum')->deleteJson("/api/users/{$user->id}");
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
