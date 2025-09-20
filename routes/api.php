@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\PlacementController;
+use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\AuthController;
 
 // Rutas públicas de autenticación
@@ -21,6 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('articles', ArticleController::class);
+    Route::apiResource('placements', PlacementController::class);
+    Route::apiResource('purchases', PurchaseController::class);
     
     // Ruta legacy para compatibilidad
     Route::get('/user', function (Request $request) {

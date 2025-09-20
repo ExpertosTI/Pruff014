@@ -6,8 +6,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
-    // Formatear usuarios es como organizar tu colección de cartas Pokémon: todo en su lugar
-    public function toArray($request)
+    /**
+     * Transform the resource into an array.
+     */
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,

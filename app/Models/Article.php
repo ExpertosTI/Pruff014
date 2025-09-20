@@ -21,4 +21,22 @@ class Article extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Relación con Placement
+     * Un artículo puede tener muchas colocaciones
+     */
+    public function placements()
+    {
+        return $this->hasMany(Placement::class);
+    }
+
+    /**
+     * Relación con Purchase
+     * Un artículo puede tener muchas compras
+     */
+    public function purchases()
+    {
+        return $this->hasMany(Purchase::class);
+    }
 }

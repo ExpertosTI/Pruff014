@@ -6,12 +6,28 @@ use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Http\Resources\ArticleResource;
+use Illuminate\Http\Request;
 
 class ArticleController extends Controller
 {
-    public function index()
+    // Buscar artículos es como buscar cassettes en una caja: hay que tener paciencia
+    public function index(Request $request)
     {
-        $articles = Article::paginate(15);
+        $query = Article::query();
+        
+        // Filtrar por fabricante es como elegir solo los discos de Sony
+        if ($request->filled('manufacturer')) {
+            $query->where('manufacturer', $request->manufacturer);
+        }
+        
+        // Buscar en descripción es como leer las letras pequeñas del CD
+        if ($request->filled('description')) {
+            $query->where('description', 'LIKE', '%' . $request->description . '%');
+        }
+        
+        // Paginar es como cambiar de lado el cassette: 15 canciones por lado
+        $articles = $query->paginate(15);
+        
         return ArticleResource::collection($articles);
     }
 

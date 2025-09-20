@@ -6,8 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
 {
-    // En los 90s creíamos que todos merecían acceso... qué inocentes éramos
-    public function authorize()
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
         return true;
     }

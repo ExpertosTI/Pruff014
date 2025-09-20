@@ -5,26 +5,33 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Client extends Model
+class Placement extends Model
 {
     use HasFactory;
 
-    // Los campos asignables son como los canales de TV: solo algunos funcionan bien
     protected $fillable = [
+        'article_id',
         'name',
-        'phone_number',
-        'client_type',
+        'price',
+        'location',
     ];
 
-    // Los casts son como cambiar de VHS a Betamax: mismo contenido, diferente formato
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
+        'price' => 'decimal:2',
     ];
 
     /**
+     * Relación con Article
+     * Una colocación pertenece a un artículo
+     */
+    public function article()
+    {
+        return $this->belongsTo(Article::class);
+    }
+
+    /**
      * Relación con Purchase
-     * Un cliente puede tener muchas compras
+     * Una colocación puede tener muchas compras
      */
     public function purchases()
     {

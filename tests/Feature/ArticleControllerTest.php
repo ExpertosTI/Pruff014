@@ -23,6 +23,12 @@ class ArticleControllerTest extends TestCase
                 ->assertJsonStructure([
                     'data' => [
                         '*' => ['id', 'barcode', 'description', 'manufacturer']
+                    ],
+                    'links',
+                    'meta' => [
+                        'current_page',
+                        'per_page',
+                        'total'
                     ]
                 ]);
     }
@@ -100,5 +106,69 @@ class ArticleControllerTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertDatabaseMissing('articles', ['id' => $article->id]);
+    }
+
+    public function test_pagination_returns_15_items_per_page()
+    {
+        $user = User::factory()->create();
+        Article::factory()->count(20)->create();
+
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/articles');
+
+        $response->assertStatus(200)
+                ->assertJsonPath('meta.per_page', 15)
+                ->assertJsonCount(15, 'data');
+    }
+
+    public function test_can_filter_articles_by_manufacturer()
+    {
+        $user = User::factory()->create();
+        Article::factory()->create(['manufacturer' => 'Sony']);
+        Article::factory()->create(['manufacturer' => 'Samsung']);
+        Article::factory()->create(['manufacturer' => 'Sony']);
+
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/articles?manufacturer=Sony');
+
+        $response->assertStatus(200)
+                ->assertJsonCount(2, 'data');
+        
+        foreach ($response->json('data') as $article) {
+            $this->assertEquals('Sony', $article['manufacturer']);
+        }
+    }
+
+    public function test_can_filter_articles_by_description()
+    {
+        $user = User::factory()->create();
+        Article::factory()->create(['description' => 'Smartphone Android']);
+        Article::factory()->create(['description' => 'iPhone Apple']);
+        Article::factory()->create(['description' => 'Tablet Android']);
+
+        $response = $this->actingAs($user, 'sanctum')->getJson('/api/articles?description=Android');
+
+        $response->assertStatus(200)
+                ->assertJsonCount(2, 'data');
+        
+        foreach ($response->json('data') as $article) {
+            $this->assertStringContainsString('Android', $article['description']);
+        }
+    }
+
+    public function test_can_combine_filters()
+    {
+        $user = User::factory()->create();
+        Article::factory()->create(['manufacturer' => 'Sony', 'description' => 'Smartphone Android']);
+        Article::factory()->create(['manufacturer' => 'Samsung', 'description' => 'Smartphone Android']);
+        Article::factory()->create(['manufacturer' => 'Sony', 'description' => 'iPhone Apple']);
+
+        $response = $this->actingAs($user, 'sanctum')
+                         ->getJson('/api/articles?manufacturer=Sony&description=Android');
+
+        $response->assertStatus(200)
+                ->assertJsonCount(1, 'data');
+        
+        $article = $response->json('data.0');
+        $this->assertEquals('Sony', $article['manufacturer']);
+        $this->assertStringContainsString('Android', $article['description']);
     }
 }
