@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
+    "name": "renace/warehouse-api",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "API RESTful para gestión de almacenes desarrollada con Laravel 9.x",
+    "keywords": ["api", "laravel", "warehouse", "rest", "almacenes"],
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
