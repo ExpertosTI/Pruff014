@@ -1,22 +1,22 @@
 # Warehouse API
 
-API REST para gestión de almacenes hecha con Laravel 9 y PHP 8.
+Una API REST que hice para manejar almacenes. Está hecha con Laravel 9 y PHP 8.
 
-## Qué hace
+## Qué hace esto
 
-Básicamente maneja clientes, artículos y usuarios. CRUD completo para todo, con validaciones, tests y autenticación con Sanctum.
+Maneja clientes, artículos y usuarios. Tiene CRUD para todo, validaciones y autenticación. Nada del otro mundo pero funciona bien.
 
 ## Autenticación
 
-La API usa **Laravel Sanctum** para autenticación basada en tokens. Implementación completa con registro, login, logout y protección de rutas.
+Implementé **Laravel Sanctum** para la autenticación con tokens. Tiene registro, login, logout y las rutas están protegidas.
 
-### Registro de Usuario
+### Registro
 ```bash
 curl -X POST http://127.0.0.1:8000/api/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Juan Pérez",
-    "email": "juan@example.com",
+    "email": "juan@example.com", 
     "password": "password123",
     "password_confirmation": "password123",
     "cedula": "001-1234567-8",
@@ -25,7 +25,7 @@ curl -X POST http://127.0.0.1:8000/api/register \
   }'
 ```
 
-**Respuesta:**
+Te devuelve algo así:
 ```json
 {
   "message": "Usuario registrado exitosamente",
@@ -44,7 +44,7 @@ curl -X POST http://127.0.0.1:8000/api/login \
   }'
 ```
 
-**Respuesta:**
+Y te da:
 ```json
 {
   "message": "Inicio de sesión exitoso",
@@ -59,38 +59,38 @@ curl -X POST http://127.0.0.1:8000/api/logout \
   -H "Authorization: Bearer {token}"
 ```
 
-### Perfil del Usuario
+### Ver tu perfil
 ```bash
 curl -X GET http://127.0.0.1:8000/api/me \
   -H "Authorization: Bearer {token}"
 ```
 
-## Endpoints
+## Los endpoints
 
-**Nota:** Todos los endpoints (excepto register y login) requieren autenticación con Bearer token.
+**Importante:** Todos necesitan el token (excepto register y login).
 
 ### Clientes
-- `GET /api/clients` - Lista todos
-- `POST /api/clients` - Crea uno nuevo
+- `GET /api/clients` - Los lista todos
+- `POST /api/clients` - Crea uno nuevo  
 - `GET /api/clients/{id}` - Ve uno específico
-- `PUT /api/clients/{id}` - Actualiza
-- `DELETE /api/clients/{id}` - Borra
+- `PUT /api/clients/{id}` - Lo actualiza
+- `DELETE /api/clients/{id}` - Lo borra
 
-### Artículos
-- `GET /api/articles` - Lista todos
+### Artículos  
+- `GET /api/articles` - Los lista todos
 - `POST /api/articles` - Crea uno nuevo
 - `GET /api/articles/{id}` - Ve uno específico
-- `PUT /api/articles/{id}` - Actualiza
-- `DELETE /api/articles/{id}` - Borra
+- `PUT /api/articles/{id}` - Lo actualiza
+- `DELETE /api/articles/{id}` - Lo borra
 
 ### Usuarios
-- `GET /api/users` - Lista todos
+- `GET /api/users` - Los lista todos
 - `POST /api/users` - Crea uno nuevo
-- `GET /api/users/{id}` - Ve uno específico
-- `PUT /api/users/{id}` - Actualiza
-- `DELETE /api/users/{id}` - Borra
+- `GET /api/users/{id}` - Ve uno específico  
+- `PUT /api/users/{id}` - Lo actualiza
+- `DELETE /api/users/{id}` - Lo borra
 
-## Setup
+## Cómo instalarlo
 
 ```bash
 composer install
@@ -105,35 +105,35 @@ php artisan migrate --seed
 php artisan test
 ```
 
-Ahora incluye tests de autenticación. Todos los tests cubren CRUD, validaciones, errores 404/422 y autenticación.
+Tiene tests para todo. CRUD, validaciones, errores y autenticación. 32 tests en total y todos pasan.
 
-## Estructura
+## Estructura del proyecto
 
 - Controllers en `app/Http/Controllers`
-- Requests para validación en `app/Http/Requests`
-- Resources para JSON en `app/Http/Resources`
+- Requests para validar en `app/Http/Requests`  
+- Resources para el JSON en `app/Http/Resources`
 - Models en `app/Models`
 - Tests en `tests/Feature`
 
-## Notas técnicas
+## Cosas técnicas
 
-- **Laravel Sanctum** implementado para autenticación con tokens
-- Form Requests para todas las validaciones
-- API Resources para respuestas consistentes
-- Fat models, skinny controllers
+- Laravel Sanctum para autenticación
+- Form Requests para validar todo
+- API Resources para que las respuestas sean consistentes
+- Fat models, skinny controllers (como debe ser)
 - Migraciones con seeders
-- Todas las rutas protegidas excepto register/login
-- **32 tests pasando** incluyendo autenticación, CRUD, validaciones y errores
-- Middleware de autenticación configurado correctamente
-- Tokens seguros con invalidación en logout
+- Rutas protegidas (excepto register/login)
+- 32 tests que pasan todos
+- Middleware configurado bien
+- Los tokens se invalidan cuando haces logout
 
-## Estado del Proyecto
+## Estado actual
 
-✅ **API REST Completa** - Todos los endpoints CRUD implementados  
-✅ **Autenticación Sanctum** - Registro, login, logout funcionando  
-✅ **Validaciones** - Form Requests en todos los endpoints  
-✅ **Tests Completos** - 32/32 tests pasando  
-✅ **Seguridad** - Rutas protegidas, tokens seguros  
-✅ **Documentación** - README actualizado con ejemplos  
+✅ API REST completa - Todos los endpoints funcionan  
+✅ Autenticación con Sanctum - Registro, login, logout  
+✅ Validaciones - Form Requests en todos lados  
+✅ Tests - 32/32 pasando  
+✅ Seguridad - Rutas protegidas, tokens seguros  
+✅ Documentación - Este README  
 
-La API está **lista para producción** y cumple con todos los requisitos técnicos.
+Ya está lista para usar.
